@@ -7,6 +7,7 @@ class Post(db.Model):
     __table_args__ = { 'extend_existing' : True }
 
     id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, nullable=False)
     title = db.Column(db.String(128), nullable=False)
     body = db.Column(db.Text, nullable=False)
 
