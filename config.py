@@ -10,12 +10,21 @@ class Config:
 
     # General Config
     SECRET_KEY = environ.get('SECRET_KEY') or 'secret_key'
-    # FLASK_APP = environ.get('FLASK_APP')
-    # FLASK_ENV = environ.get('FLASK_ENV')
-    FLASK_APP = 'app.py'
-    FLASK_ENV = 'development'
+    FLASK_APP = environ.get('FLASK_APP')
+    FLASK_ENV = environ.get('FLASK_ENV')
 
-    # Database
-    SQLALCHEMY_DATABASE_URI = environ.get("SQLALCHEMY_DATABASE_URI")
+    @staticmethod
+    def init_app(app):
+        pass
+
+class DevelopmentConfig(Config):
+    DEBUG = True
+    SQLALCHEMY_DATABASE_URI = environ.get('DEV_DATABASE_URL') or \
+        'sqlite:///' + path.join(basedir, 'data-dev.sqlite')
     SQLALCHEMY_ECHO = True
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+config = {
+    'development': DevelopmentConfig,
+    'default': DevelopmentConfig,
+}
