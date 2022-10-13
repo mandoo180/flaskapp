@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Flasky - Sign Up {% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>Join</h1>
+</div>
+<div class="col-md-4">
+  <form method="POST">
+    {{ form.hidden_tag() }}
+    {{ form.email.label }}
+    {{ form.email}}
+    {{ form.username.label }}
+    {{ form.username}}
+    {{ form.password.label }}
+    {{ form.password }}
+    {{ form.password2.label }}
+    {{ form.password2 }}
+    {{ form.submit }}
+  </form>
+</div>
+{% endblock %}

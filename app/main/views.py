@@ -1,4 +1,5 @@
 from flask import render_template, request
+from flask_login import login_required
 from app.main import main
 # from app.main.forms import PageDownForm
 from markdown import markdown
@@ -18,6 +19,18 @@ from markdown import markdown
 def index():
     return render_template('/index.html')
 
+@main.route('/posts', methods=['GET'])
+def posts():
+    return render_template('main/posts.html')
+
+@main.route('/products', methods=['GET'])
+def products():
+    return render_template('main/products.html')
+
+@main.route('/orders', methods=['GET'])
+def orders():
+    return render_template('main/products.html')
+
 @main.route('/success')
 def success():
     args = request.args
@@ -35,3 +48,4 @@ def fail():
     order_no = args['orderId']
     print(code, message, order_no)
     return render_template('/fail.html')
+
