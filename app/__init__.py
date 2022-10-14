@@ -2,7 +2,6 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_mail import Mail
-# from flask_pagedown import PageDown
 from config import config
 
 
@@ -30,11 +29,13 @@ def create_app(config_name):
 
     # db.create_all()
     
-    from app.auth import auth as auth_blueprint
     from app.main import main as main_blueprint
+    from app.auth import auth as auth_blueprint
+    from app.admin import admin as admin_blueprint
     
-    app.register_blueprint(auth_blueprint)
     app.register_blueprint(main_blueprint)
+    app.register_blueprint(auth_blueprint, url_prefix='/auth')
+    app.register_blueprint(admin_blueprint, url_prefix='/admin')
 
     return app
 

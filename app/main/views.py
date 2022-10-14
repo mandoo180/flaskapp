@@ -23,6 +23,22 @@ def index():
 def posts():
     return render_template('main/posts.html')
 
+@main.route('/post/<int:id>', methods=['GET'])
+def post(id):
+    post = Post.query.get(id)
+    return render_template('main/post.html', post=post)
+
+@login_required
+@main.route('/post/<int:id>', methods=['POST'])
+def edit_post(id):
+    post = Post.query.get(id)
+    return render_template('main/post.html', post=post)
+
+@login_required
+@main.route('/post', methods=['GET'])
+def new_post():
+    return render_template('main/post.html')
+
 @main.route('/products', methods=['GET'])
 def products():
     return render_template('main/products.html')
@@ -30,6 +46,7 @@ def products():
 @main.route('/orders', methods=['GET'])
 def orders():
     return render_template('main/products.html')
+
 
 @main.route('/success')
 def success():

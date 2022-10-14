@@ -6,9 +6,11 @@ from sqlalchemy.orm import relationship, selectinload, joinedload
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import current_app, request, url_for
 from flask_login import UserMixin, AnonymousUserMixin
+from app.models.key import Key
 
 import hashlib
 # import bleach
+
 
 
 class User(UserMixin, db.Model):
@@ -18,21 +20,26 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(64), unique=True, nullable=False)
     username = db.Column(db.String(64), unique=True, nullable=False)
-    str_date = db.Column(db.String(8), nullable=False)
+    password_hash = db.Column(db.String(128), nullable=False)
     userno = db.Column(db.String(16), nullable=False)
-    role = db.Column(db.String(8), nullable=False)
+    role = db.Column(db.String(8), nullable=False, default='USER')
     last_seen = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
-    @staticmethod
-    def next_userno():
-        today = datetime.utcnow().strftime('%Y%m%d')
-        stmt = select(func.max(User.id)).where(User.str_date == today)
-        max_id = db.session.execute(stmt).scalar() or 0
-        max_id += 1
-        max_id_str = ('000000' + str(max_id))[-6:]
-        return f"{today}{max_id_str}"
+    @property
+    def password(self):
+        raise AttributeError("Password is not a readable attribute.")
+
+    @password.setter
+    def password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def verify_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+    def is_admin(self):
+        return self.role == 'ADMIN'
 
     def ping(self):
         self.last_seen = datetime.utcnow()
@@ -43,8 +50,7 @@ class User(UserMixin, db.Model):
         if self.id:
             self.updated_at = datetime.utcnow()
         else:
-            self.str_date = datetime.utcnow().strftime('%Y%m%d')
-            self.userno = User.next_userno()
+            self.userno = Key.getnext('user')
         db.session.add(self)
         db.session.commit()
 
